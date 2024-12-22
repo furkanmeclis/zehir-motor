@@ -453,7 +453,24 @@ const Index = ({auth, csrf_token, categories}) => {
                                                 summary: 'Başarılı',
                                                 detail: data.message
                                             });
-                                            router.reload()
+                                            getAllProducts(csrf_token).then((response) => {
+                                                if (response.status) {
+                                                    setProducts(response.data)
+                                                } else {
+                                                    toast.current.show({
+                                                        severity: 'error',
+                                                        summary: 'Hata',
+                                                        detail: 'Ürünler yüklenirken bir hata oluştu.'
+                                                    })
+                                                }
+                                            }).catch((err) => {
+                                                console.log(err);
+                                                toast.current.show({
+                                                    severity: 'error',
+                                                    summary: 'Hata',
+                                                    detail: 'Ürünler yüklenirken bir hata oluştu.'
+                                                })
+                                            }).finally(() => setLoading(false));
                                         } else {
                                             toast.current.show({
                                                 severity: 'error',
