@@ -453,6 +453,7 @@ const Index = ({auth, csrf_token, categories}) => {
                                                 summary: 'Başarılı',
                                                 detail: data.message
                                             });
+                                            router.reload()
                                         } else {
                                             toast.current.show({
                                                 severity: 'error',
