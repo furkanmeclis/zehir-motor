@@ -46,7 +46,7 @@ class HomeController
         return Inertia::render("Katalog", [
             "defaultImage" => asset("uploads/images/default.png"),
             "categories" => Category::all(["name"]),
-            "phoneNumber" => env("CATALOG_PHONE_NUMBER") ?? "905458870147",
+            "phoneNumber" => "905458870147",
             "password" => env("CATALOG_PASSWORD"),
         ]);
     }

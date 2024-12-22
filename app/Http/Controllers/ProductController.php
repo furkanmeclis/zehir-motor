@@ -292,7 +292,7 @@ class ProductController extends Controller
     public function syncCkymotoservice(Request $request): array
     {
         $ep = env("CKYMOTO_URL") . "api/poison-motor/export";
-        $includePrices = $request->input('includePrices') ?? false;
+        $includePrices =@json_decode($request->getContent(),true)["includePrice"] ?? false;
         try {
             $response = \Illuminate\Support\Facades\Http::post($ep);
             if ($response->successful()) {
