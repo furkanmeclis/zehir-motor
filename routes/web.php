@@ -18,6 +18,8 @@ Route::middleware('auth')->group(function () {
         Route::put("/{id}/update", [\App\Http\Controllers\UserController::class, "update"])->name("update");
         Route::delete("/{id}/delete", [\App\Http\Controllers\UserController::class, "destroy"])->name("destroy");
     });
+    Route::post("/reset-database", [\App\Http\Controllers\HomeController::class, "resetDatabase"])->name("resetDatabase");
+    Route::post("/reset-images", [\App\Http\Controllers\HomeController::class, "resetImages"])->name("resetImages");
     Route::get('/profil', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profil', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profil', [ProfileController::class, 'destroy'])->name('profile.destroy');

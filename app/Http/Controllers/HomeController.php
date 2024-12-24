@@ -6,7 +6,10 @@ use App\Exports\IdeasoftProductExport;
 use App\Exports\LogoGo3PriceCardExport;
 use App\Models\Category;
 use App\Models\Package;
+use App\Models\Product;
 use App\Services\VatanSmsService;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -106,5 +109,27 @@ class HomeController
             "status" => true,
             "message" => "Firestore verileri başarıyla aktarıldı.",
         ]);
+    }
+
+    public function resetDatabase(): \Illuminate\Http\JsonResponse
+    {
+        DB::table("products")->truncate();
+        return response()->json([
+            "status" => true,
+            "message" => "Ürünler başarıyla sıfırlandı.",
+        ]);
+    }
+
+    public function resetImages(): \Illuminate\Http\JsonResponse
+    {
+        $path = public_path("uploads/images");
+        foreach (File::directories($path) as $directory) {
+            File::deleteDirectory($directory);
+        }
+        return response()->json([
+            "status" => true,
+            "message" => "Resimler başarıyla sıfırlandı.",
+        ]);
+
     }
 }

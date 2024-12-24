@@ -9,6 +9,7 @@ import {Chip} from "primereact/chip";
 import {Tag} from "primereact/tag";
 import {BlockUI} from "primereact/blockui";
 import {getStatsData} from "@/helpers/helper.js";
+import {ConfirmDialog, confirmDialog} from "primereact/confirmdialog";
 
 export default function Home({auth, csrf_token}) {
     const [loading, setLoading] = React.useState(true);
@@ -75,10 +76,97 @@ export default function Home({auth, csrf_token}) {
                                             className="p-button-info"/>
                                 </div>
                             </Card>
+                            <Card title={"Tehlike Bildirimleri"}
+                                  subTitle={<>Sistemi Sıfırla</>}>
+                                <div className={"flex justify-between gap-x-2"}>
+                                    <Button label="Veritabanı Sıfırla" icon="pi pi-database" size={"small"}
+                                            onClick={(e) => {
+                                                confirmDialog({
+                                                    message: 'Tüm ürünler sıfırlanacak. Devam etmek istediğinize emin misiniz?',
+                                                    header: 'Onay',
+                                                    icon: 'pi pi-exclamation-triangle',
+                                                    accept: () => {
+                                                        setLoading(true);
+                                                        fetch(route("resetDatabase"), {
+                                                            headers: {
+                                                                'X-CSRF-TOKEN': csrf_token,
+                                                            },
+                                                            method: "POST"
+                                                        }).then(response => response.json()).then(data => {
+                                                            if (data.status) {
+                                                                toast.current.show({
+                                                                    severity: 'success',
+                                                                    summary: 'Başarılı',
+                                                                    detail: data.message
+                                                                });
+                                                            } else {
+                                                                toast.current.show({
+                                                                    severity: 'error',
+                                                                    summary: 'Hata',
+                                                                    detail: data.message
+                                                                });
+                                                            }
+                                                        }).catch((error) => {
+                                                            toast.current.show({
+                                                                severity: 'error',
+                                                                summary: 'Hata',
+                                                                detail: "CSRF Token Hatası Lütfen Sayfayı Yenileyiniz.."
+                                                            });
+                                                        }).finally(() => {
+                                                            setLoading(false);
+                                                        });
+                                                    }
+                                                })
+                                            }}
+                                            className="p-button-danger"/>
+                                    <Button label="Resimleri Temizle" icon="pi pi-images"
+                                            onClick={(e) => {
+                                                confirmDialog({
+                                                    message: 'Tüm resimler silinecek. Devam etmek istediğinize emin misiniz?',
+                                                    header: 'Onay',
+                                                    icon: 'pi pi-exclamation-triangle',
+                                                    accept: () => {
+                                                        setLoading(true);
+                                                        fetch(route("resetImages"), {
+                                                            headers: {
+                                                                'X-CSRF-TOKEN': csrf_token,
+                                                            },
+                                                            method: "POST"
+                                                        }).then(response => response.json()).then(data => {
+                                                            if (data.status) {
+                                                                toast.current.show({
+                                                                    severity: 'success',
+                                                                    summary: 'Başarılı',
+                                                                    detail: data.message
+                                                                });
+                                                            } else {
+                                                                toast.current.show({
+                                                                    severity: 'error',
+                                                                    summary: 'Hata',
+                                                                    detail: data.message
+                                                                });
+                                                            }
+                                                        }).catch((error) => {
+                                                            toast.current.show({
+                                                                severity: 'error',
+                                                                summary: 'Hata',
+                                                                detail: "CSRF Token Hatası Lütfen Sayfayı Yenileyiniz.."
+                                                            });
+                                                        }).finally(() => {
+                                                            setLoading(false);
+                                                        });
+                                                    }
+                                                })
+                                            }}
+
+                                            className="p-button-info"/>
+                                </div>
+                            </Card>
                         </div>}
                     </BlockUI>
                 </div>
             </div>
+            <ConfirmDialog/>
         </AuthenticatedLayout>
     );
 }
