@@ -25,12 +25,13 @@ class Product extends Model
             return $product;
         });
     }
-    public static function getActiveProducts($images=false): \Illuminate\Database\Eloquent\Collection
+
+    public static function getActiveProducts($images = false): \Illuminate\Database\Eloquent\Collection
     {
-        return Product::where('id', '>', 0)->where('is_active',1)->orderBy('order')->get()->map(function ($product) use ($images) {
+        return Product::where('id', '>', 0)->where('is_active', 1)->orderBy('order')->get()->map(function ($product) use ($images) {
             $product->campaign_price = $product->priceFormatter()->tl;
             $product->price = round($product->price, 2);
-            if($images){
+            if ($images) {
                 $product->images = $product->getImages(true);
             }
             return $product;
@@ -166,12 +167,12 @@ class Product extends Model
             }
             return null;
         })->filter();
-        if($getAll === true){
+        if ($getAll === true) {
             return $products;
-        }else{
+        } else {
             $returnProducts = [];
             foreach ($products as $product) {
-                if($product->zeon_active){
+                if ($product->zeon_active) {
                     $returnProducts[] = $product;
                 }
             }
@@ -187,11 +188,11 @@ class Product extends Model
         $sku = str_replace("CKY", "ONR", $sku);
         $activeProducts = $this->zeonCache["activeProducts"];
         if (isset($activeProducts[$sku])) {
-            if($activeProducts[$sku] == 1){
+            if ($activeProducts[$sku] == 1) {
                 return true;
-            }elseif($activeProducts[$sku] == 0){
+            } elseif ($activeProducts[$sku] == 0) {
                 return false;
-            }else{
+            } else {
                 return $activeProducts[$sku];
             }
         } else {
@@ -217,9 +218,9 @@ class Product extends Model
 
     public static function zeonActiveProducts($keys): bool
     {
-        if(is_array($keys)){
+        if (is_array($keys)) {
             $products = $keys;
-        }else{
+        } else {
             $products = [$keys];
         }
         $zeonProducts = json_decode(file_get_contents(storage_path('app/zeon_active.json')), true);
@@ -236,7 +237,7 @@ class Product extends Model
 
     public static function zeonDeActiveProducts($keys): bool
     {
-        if(!is_array($keys)) {
+        if (!is_array($keys)) {
             $products = [$keys];
         } else {
             $products = $keys;
@@ -252,6 +253,7 @@ class Product extends Model
         file_put_contents(storage_path('app/zeon_active.json'), json_encode($saveArray));
         return true;
     }
+
     public static function restoreZeonActiveProducts(): void
     {
         $zeonProducts = json_decode(file_get_contents(storage_path('app/zeon_active.json')), true);
@@ -277,7 +279,7 @@ class Product extends Model
             if (!$transaction) {
                 $active = true;
             }
-            $saveArray[str_replace("CKY","ONR",$sku)] = $active;
+            $saveArray[str_replace("CKY", "ONR", $sku)] = $active;
         }
         file_put_contents(storage_path('app/zeon_active.json'), json_encode($saveArray));
 
@@ -286,56 +288,57 @@ class Product extends Model
     public static function poisonProducts()
     {
         $products = Product::where('id', '>', "0")->orderBy('order')->get();
-        $products->map(function ($product)  {
+        $products->map(function ($product) {
             $product->is_new = $product->is_new == 1;
             $product->is_discount = $product->is_discount == 1;
             $product->is_active = $product->is_active == 1;
             $product->price = $product->priceFormatter()->tl;
             $product->images = $product->getImages(true);
             $product->sku = Str::replace('CKY', 'ZHR', $product->sku);
-            $product->uniqid = $product->id."-".$product->sku;
+            $product->uniqid = $product->id . "-" . $product->sku;
             return null;
         })->filter();
         return $products;
     }
 
-    public static function poisonProductsImport($products,$importPrices = true)
+    public static function poisonProductsImport($products, $importPrices = true)
     {
         $systemLog = [];
         $inserted = 0;
         $updated = 0;
         foreach ($products as $product) {
-            $product = (object) $product;
-            $existsProduct = self::where('uniqid',$product->uniqid)->first();
+            $product = (object)$product;
+            $existsProduct = self::where('uniqid', $product->uniqid)->first();
             if ($existsProduct) {
-                if($importPrices){
+                if ($importPrices) {
                     $existsProduct->price = $product->price;
                 }
                 $existsProduct->sku = $product->sku;
                 $existsProduct->is_new = $product->is_new;
                 $existsProduct->is_discount = $product->is_discount;
                 $existsProduct->is_active = $product->is_active;
+                $existsProduct->is_tl = 1;
                 $existsProduct->save();
-                $systemLog[] = $product->uniqid." Uniqidine Sahip Ürün Güncellendi ".date("d.m.Y H:i:s");
+                $systemLog[] = $product->uniqid . " Uniqidine Sahip Ürün Güncellendi " . date("d.m.Y H:i:s");
                 $updated++;
-            }else{
+            } else {
                 $newProduct = new Product();
                 $newProduct->order = $product->order;
-                $newProduct->sku  = $product->sku;
+                $newProduct->sku = $product->sku;
                 $newProduct->name = $product->name;
                 $newProduct->category = $product->category;
                 $newProduct->price = $product->price;
                 $newProduct->is_new = $product->is_new;
                 $newProduct->is_discount = $product->is_discount;
                 $newProduct->is_active = $product->is_active;
-                $newProduct->is_tl = $product->is_tl;
+                $newProduct->is_tl = 1;
                 $newProduct->uniqid = $product->uniqid;
-                if($newProduct->save() && self::newProductImageImport($product->images,$newProduct->sku)){
-                    $systemLog[] = $newProduct->uniqid." Yeni Ürün Eklendi ".date("d.m.Y H:i:s");
+                if ($newProduct->save() && self::newProductImageImport($product->images, $newProduct->sku)) {
+                    $systemLog[] = $newProduct->uniqid . " Yeni Ürün Eklendi " . date("d.m.Y H:i:s");
                     $inserted++;
-                }else{
+                } else {
                     $newProduct->delete();
-                    $systemLog[] = $newProduct->uniqid." Ürün Eklenemedi ".date("d.m.Y H:i:s");
+                    $systemLog[] = $newProduct->uniqid . " Ürün Eklenemedi " . date("d.m.Y H:i:s");
                 }
             }
         }
@@ -346,7 +349,7 @@ class Product extends Model
         ];
     }
 
-    public static function newProductImageImport($images, $sku):bool
+    public static function newProductImageImport($images, $sku): bool
     {
         $sku = Str::upper(Str::slug($sku));
         $filesPath = public_path('uploads/images/' . $sku);
@@ -359,7 +362,7 @@ class Product extends Model
         foreach ($images as $image) {
             $response = Http::get($image);
             if ($response->successful()) {
-                $fileName = $i.time() . "_$sku" . pathinfo(parse_url($image, PHP_URL_PATH), PATHINFO_EXTENSION);
+                $fileName = $i . time() . "_$sku" . pathinfo(parse_url($image, PHP_URL_PATH), PATHINFO_EXTENSION);
                 $fileFullPath = $filesPath . '/' . $fileName;
                 if (file_put_contents($fileFullPath, $response->body()) === false) {
                     $error = true;
