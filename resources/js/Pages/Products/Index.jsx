@@ -6,7 +6,7 @@ import {FilterMatchMode} from "primereact/api";
 import {Toolbar} from "primereact/toolbar";
 import {Button} from "primereact/button";
 import {Column} from "primereact/column";
-import {confirmPopup} from "primereact/confirmpopup";
+import {ConfirmPopup, confirmPopup} from "primereact/confirmpopup";
 import {DataTable} from "primereact/datatable";
 import {Toast} from "primereact/toast";
 import {Dropdown} from 'primereact/dropdown';
@@ -149,6 +149,7 @@ const Index = ({auth, csrf_token, categories}) => {
         >
             <Toast ref={toast}/>
             <Head title="Ürünler"/>
+            <ConfirmPopup/>
             <div className="py-6">
                 <div className="max-w-[90rem] mx-auto sm:px-6 lg:px-8">
                     <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">

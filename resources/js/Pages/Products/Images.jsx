@@ -31,6 +31,49 @@ const Images = ({product, visible, setVisible, toast, csrf_token}) => {
             setMedia([]);
         }
     }, [visible]);
+    const deleteDiaolog = (e, name, deleteUrl) => {
+        confirmPopup({
+            target: e.currentTarget,
+            message: `"${name}" adlı resmi silmek istediğinize emin misiniz?`,
+            icon: 'pi pi-exclamation-triangle',
+            acceptClassName: 'p-button-danger',
+            acceptLabel: 'Sil',
+            rejectLabel: 'Vazgeç',
+            accept: () => {
+                setLoading(true);
+                fetch(deleteUrl, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': csrf_token
+                    }
+                }).then(response => response.json())
+                    .then(data => {
+                        if (data.status) {
+                            getImages();
+                            toast.current.show({
+                                severity: 'success',
+                                summary: 'Başarılı',
+                                detail: data.message
+                            });
+                        } else {
+                            toast.current.show({
+                                severity: 'error',
+                                summary: 'Hata',
+                                detail: data.message
+                            });
+                        }
+                    }).catch(error => {
+                    toast.current.show({
+                        severity: 'error',
+                        summary: 'Hata',
+                        detail: 'Bir hata oluştu'
+                    });
+                }).finally(() => {
+                    setLoading(false);
+                });
+            }
+        });
+    }
     return <>
         <Dialog header={"'" + product?.name + ("' Adlı Ürünün Görselleri")} style={{width: '50vw'}}
                 breakpoints={{'960px': '75vw', '641px': '100vw'}}
@@ -65,48 +108,9 @@ const Images = ({product, visible, setVisible, toast, csrf_token}) => {
                                 position: 'top'
                             }} loading={loading}
                                     className={"p-button-danger p-button-rounded absolute top-1 right-1 z-40"}
+                                    type={"button"}
                                     onClick={(e) => {
-                                        confirmPopup({
-                                            target: e.currentTarget,
-                                            message: `"${name}" adlı resmi silmek istediğinize emin misiniz?`,
-                                            icon: 'pi pi-exclamation-triangle',
-                                            acceptClassName: 'p-button-danger',
-                                            acceptLabel: 'Sil',
-                                            rejectLabel: 'Vazgeç',
-                                            accept: () => {
-                                                setLoading(true);
-                                                fetch(deleteUrl, {
-                                                    method: 'DELETE',
-                                                    headers: {
-                                                        'X-CSRF-TOKEN': csrf_token
-                                                    }
-                                                }).then(response => response.json())
-                                                    .then(data => {
-                                                        if (data.status) {
-                                                            getImages();
-                                                            toast.current.show({
-                                                                severity: 'success',
-                                                                summary: 'Başarılı',
-                                                                detail: data.message
-                                                            });
-                                                        } else {
-                                                            toast.current.show({
-                                                                severity: 'error',
-                                                                summary: 'Hata',
-                                                                detail: data.message
-                                                            });
-                                                        }
-                                                    }).catch(error => {
-                                                    toast.current.show({
-                                                        severity: 'error',
-                                                        summary: 'Hata',
-                                                        detail: 'Bir hata oluştu'
-                                                    });
-                                                }).finally(() => {
-                                                    setLoading(false);
-                                                });
-                                            }
-                                        });
+                                        deleteDiaolog(e, name, deleteUrl);
                                     }}/>
                         </div>
                         <Image src={url} alt={"Resim"} key={index} preview className={"w-full h-full"}/>
