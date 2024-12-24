@@ -1,13 +1,14 @@
 import {Disclosure} from "@headlessui/react";
 
-export default function LandingNavbar () {
+export default function LandingNavbar() {
     const navigation = [
         "Admin",
     ];
 
     return (
         <div className="w-full">
-            <nav className="container relative flex flex-wrap items-center justify-between p-8 mx-auto lg:justify-between xl:px-1">
+            <nav
+                className="container relative flex flex-wrap items-center justify-between p-8 mx-auto lg:justify-between xl:px-1">
                 {/* Logo  */}
                 <a href="/">
           <span className="flex items-center space-x-2 text-2xl font-medium text-indigo-500 dark:text-gray-100">
@@ -25,14 +26,15 @@ export default function LandingNavbar () {
                 {/* get started  */}
                 <div className="gap-3 nav__item mr-2 lg:flex ml-auto lg:ml-0 lg:order-2">
                     <div className="hidden mr-3 lg:flex nav__item">
-                        <a href="https://wa.me/905458870147" className="px-6 py-2 text-white bg-green-600 rounded-md md:ml-5 flex items-center justify-center gap-x-2">
-                          <i className="pi pi-whatsapp"></i>  Whatsapp
+                        <a href="https://wa.me/905458870147"
+                           className="px-6 py-2 text-white bg-green-600 rounded-md md:ml-5 flex items-center justify-center gap-x-2">
+                            <i className="pi pi-whatsapp"></i> Whatsapp
                         </a>
                     </div>
                 </div>
 
                 <Disclosure>
-                    {({ open }) => (
+                    {({open}) => (
                         <>
                             <Disclosure.Button
                                 aria-label="Toggle Menu"
@@ -60,12 +62,14 @@ export default function LandingNavbar () {
                             <Disclosure.Panel className="flex flex-wrap w-full my-5 lg:hidden">
                                 <>
                                     {navigation.map((item, index) => (
-                                        <a key={index} href="/anasayfa" className="w-full px-4 py-2 -ml-4 text-gray-500 rounded-md dark:text-gray-300 hover:text-indigo-500 focus:text-indigo-500 focus:bg-indigo-100 dark:focus:bg-gray-800 focus:outline-none">
+                                        <a key={index} href="/login"
+                                           className="w-full px-4 py-2 -ml-4 text-gray-500 rounded-md dark:text-gray-300 hover:text-indigo-500 focus:text-indigo-500 focus:bg-indigo-100 dark:focus:bg-gray-800 focus:outline-none">
                                             {item}
                                         </a>
                                     ))}
-                                    <a href="https://wa.me/905458870147" className="w-full px-6 py-2 mt-3 text-center text-white bg-green-600 rounded-md lg:ml-5">
-                                        <i className="pi pi-whatsapp"></i>  Whatsapp
+                                    <a href="https://wa.me/905458870147"
+                                       className="w-full px-6 py-2 mt-3 text-center text-white bg-green-600 rounded-md lg:ml-5">
+                                        <i className="pi pi-whatsapp"></i> Whatsapp
                                     </a>
                                 </>
                             </Disclosure.Panel>
@@ -78,7 +82,8 @@ export default function LandingNavbar () {
                     <ul className="items-center justify-end flex-1 pt-6 list-none lg:pt-0 lg:flex">
                         {navigation.map((menu, index) => (
                             <li className="mr-3 nav__item" key={index}>
-                                <a href="/anasayfa" className="inline-block px-4 py-2 text-lg font-normal text-gray-800 no-underline rounded-md dark:text-gray-200 hover:text-indigo-500 focus:text-indigo-500 focus:bg-indigo-100 focus:outline-none dark:focus:bg-gray-800">
+                                <a href="/login"
+                                   className="inline-block px-4 py-2 text-lg font-normal text-gray-800 no-underline rounded-md dark:text-gray-200 hover:text-indigo-500 focus:text-indigo-500 focus:bg-indigo-100 focus:outline-none dark:focus:bg-gray-800">
                                     {menu}
                                 </a>
                             </li>
