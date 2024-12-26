@@ -127,6 +127,7 @@ class ProductController extends Controller
         } else {
             $product = new Product();
             $product->name = $name;
+            $product->uniqid = Str::uuid();
             $product->sku = $sku;
             $product->price = $price;
             $product->is_tl = 1;
