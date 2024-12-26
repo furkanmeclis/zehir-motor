@@ -129,7 +129,7 @@ class ProductController extends Controller
             $product->name = $name;
             $product->sku = $sku;
             $product->price = $price;
-            $product->is_tl = $is_tl;
+            $product->is_tl = 1;
             $product->category = $category;
             if ($order) {
                 $product->order = $order;
@@ -221,7 +221,7 @@ class ProductController extends Controller
             $product->sku = $request->input('sku');
             $product->price = $request->input('price');
             $product->order = $request->input('order');
-            $product->is_tl = $request->input('is_tl');
+            $product->is_tl = 1;
             $product->category = $request->input('category');
             $product->is_active = $request->input('is_active');
             $product->is_new = $request->input('is_new');
@@ -292,7 +292,7 @@ class ProductController extends Controller
     public function syncCkymotoservice(Request $request): array
     {
         $ep = env("CKYMOTO_URL") . "api/poison-motor/export";
-        $includePrices =@json_decode($request->getContent(),true)["includePrice"] ?? false;
+        $includePrices = @json_decode($request->getContent(), true)["includePrice"] ?? false;
         try {
             $response = \Illuminate\Support\Facades\Http::post($ep);
             if ($response->successful()) {
