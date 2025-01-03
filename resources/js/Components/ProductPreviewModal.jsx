@@ -1,12 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from 'react-use-cart';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
 import logo from '@/logo.png';
 
 const ProductPreviewModal = ({ product, isOpen, onClose }) => {
     const { addItem, inCart, updateItemQuantity, getItem, removeItem } = useCart();
-    const fallbackImage = 'https://t4.ftcdn.net/jpg/04/70/29/97/360_F_470299797_UD0eoVMMSUbHCcNJCdv2t8B2g1GVqYgs.jpg';
+    const [selectedImage, setSelectedImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
+
+    const images = product?.images?.length > 0 
+        ? product.images 
+        : product?.image 
+            ? [product.image]
+            : ['https://t4.ftcdn.net/jpg/04/70/29/97/360_F_470299797_UD0eoVMMSUbHCcNJCdv2t8B2g1GVqYgs.jpg'];
 
     useEffect(() => {
         if (inCart(product?.id)) {
@@ -32,7 +39,7 @@ const ProductPreviewModal = ({ product, isOpen, onClose }) => {
             name: product.name,
             price: product.campaign_price,
             sku: product.sku,
-            image: fallbackImage,
+            image: images[selectedImage],
         }, quantity);
     };
 
@@ -71,10 +78,13 @@ const ProductPreviewModal = ({ product, isOpen, onClose }) => {
                     <div className="grid md:grid-cols-2 gap-8 p-8">
                         {/* Ürün Görseli */}
                         <div className="relative aspect-square rounded-xl overflow-hidden">
-                            <img
-                                src={fallbackImage}
+                            <LazyLoadImage
+                                src={images[selectedImage]}
                                 alt={product.name}
-                                className="w-full h-full object-cover"
+                                effect="opacity"
+                                className="w-full h-full object-contain"
+                                loading="lazy"
+                                threshold={100}
                             />
                             <div className="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none select-none">
                                 <img src={logo} alt="Watermark" className="w-48 h-48 object-contain" />
@@ -84,6 +94,30 @@ const ProductPreviewModal = ({ product, isOpen, onClose }) => {
                                     <span className="bg-green-500 text-white px-4 py-2 rounded-full text-sm font-medium">
                                         Yeni
                                     </span>
+                                </div>
+                            )}
+                            {images.length > 1 && (
+                                <div className="absolute bottom-4 left-4 right-4">
+                                    <div className="grid grid-cols-4 gap-2">
+                                        {images.map((image, index) => (
+                                            <button
+                                                key={index}
+                                                onClick={() => setSelectedImage(index)}
+                                                className={`relative aspect-square overflow-hidden rounded-lg bg-white/80 backdrop-blur-sm ${
+                                                    selectedImage === index ? 'ring-2 ring-yellow-500' : ''
+                                                }`}
+                                            >
+                                                <LazyLoadImage
+                                                    src={image}
+                                                    alt={`${product.name} - ${index + 1}`}
+                                                    effect="opacity"
+                                                    className="h-full w-full object-contain"
+                                                    loading="lazy"
+                                                    threshold={100}
+                                                />
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
                             )}
                         </div>

@@ -21,7 +21,7 @@ const HeroSection = ({ newProducts = [] }) => {
             >
                 <div className="relative h-64">
                     <img
-                        src={fallbackImage}
+                        src={product.images?.[0] || fallbackImage}
                         alt={product.name}
                         className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
                     />

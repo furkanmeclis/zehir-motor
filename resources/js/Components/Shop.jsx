@@ -203,7 +203,7 @@ const ShopContent = ({ products = [], phoneNumber = "905458870147" }) => {
                             src={product.images?.[0] || fallbackImage}
                             alt={product.name}
                             effect="blur"
-                            className="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-300"
+                            className="w-full h-full object-contain transform group-hover:scale-110 transition-transform duration-300"
                             onError={(e) => e.target.src = fallbackImage}
                             afterLoad={() => setIsLoading(false)}
                             threshold={100}
