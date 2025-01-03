@@ -7,6 +7,7 @@ use Inertia\Inertia;
 
 Route::get('/', [\App\Http\Controllers\HomeController::class, "katalog"])->name("home");
 Route::get("/katalog", [\App\Http\Controllers\HomeController::class, "katalog"])->name("katalog");
+Route::get("/sepet", [\App\Http\Controllers\HomeController::class, "cart"])->name("cart");
 Route::get('/anasayfa', [\App\Http\Controllers\HomeController::class, "index"])->middleware("only:admin,engineer,salesman")->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -57,6 +58,7 @@ Route::prefix('api')->group(function () {
     Route::post("/get-new-packages", [\App\Http\Controllers\ApiController::class, "getNewPackages"])->name("api.getNewPackages");
     Route::post("/get-customers", [\App\Http\Controllers\ApiController::class, "getCustomers"])->name("api.getCustomers");
     Route::post("/get-groups", [\App\Http\Controllers\ApiController::class, "getGroups"])->name("api.getGroups");
+    Route::post("/orders", [\App\Http\Controllers\OrderController::class, "store"])->name("api.orders.store");
 });
 
 require __DIR__ . '/auth.php';

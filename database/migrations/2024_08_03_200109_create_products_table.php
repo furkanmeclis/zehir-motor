@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('products', function (Blueprint $table) {
             $table->id();
+            $table->string("uniqid")->unique();
             $table->integer("order");
             $table->string("sku");
             $table->string("name");
@@ -22,6 +23,7 @@ return new class extends Migration
             $table->integer("is_discount");
             $table->integer("is_tl");
             $table->boolean("is_active");
+
             $table->timestamps();
         });
     }

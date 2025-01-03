@@ -54,6 +54,11 @@ class HomeController
         ]);
     }
 
+    public function cart(): \Inertia\Response
+    {
+        return Inertia::render("Cart");
+    }
+
     public function importFirestore()
     {
         $path = storage_path("backup.json");

@@ -1,74 +1,58 @@
-import ApplicationLogo from "@/Components/ApplicationLogo.jsx";
-import {Button} from "primereact/button";
-import React, {useEffect, useRef, useState} from 'react';
-import 'primereact/resources/primereact.css';
-import Catalog from "@/Components/Catalog.jsx";
-import {Head, router} from "@inertiajs/react";
-import {BlockUI} from "primereact/blockui";
-import {InputOtp} from 'primereact/inputotp';
-import {useLocalStorage} from "primereact/hooks";
-import {getCatalogProducts} from "@/helpers/helper.js";
-import {Toast} from "primereact/toast";
-import LandingNavbar from "@/Components/LandingNavbar.jsx";
-import LandingFooter from "@/Components/LandingFooter.jsx";
+import React, { useState, useEffect } from 'react';
+import Shop from '@/Components/Shop';
+import HeroSection from '@/Components/HeroSection';
+import Navbar from '@/Components/Navbar';
+import Footer from '@/Components/Footer';
+import { CartProvider } from 'react-use-cart';
+import { Head } from '@inertiajs/react';
+import { getCatalogProducts } from "@/helpers/helper.js";
 
-const Katalog = ({categories, phoneNumber, password, csrf_token}) => {
-    const toast = useRef(null);
+const Katalog = ({ phoneNumber, csrf_token }) => {
     const [loading, setLoading] = useState(true);
-    const [productsAll, setProductsAll] = useState([]);
-    const [cartVisible, setCartVisible] = useState(false);
-    const [logined, setLogined] = useLocalStorage(false, 'loginedCatalogForCkyMoto');
+    const [products, setProducts] = useState([]);
+
     useEffect(() => {
-        getCatalogProducts(csrf_token).then(({status, data}) => {
-            if (status) {
-                setProductsAll(data);
-            } else {
-                toast.current.show({
-                    severity: 'error',
-                    summary: 'Hata',
-                    detail: 'Ürünler yüklenirken bir hata oluştu.',
-                    life: 3000
-                });
-            }
-        }).catch((err) => {
-            console.error(err);
-            toast.current.show({
-                severity: 'error',
-                summary: 'Hata',
-                detail: 'Ürünler yüklenirken bir hata oluştu.',
-                life: 3000
+        getCatalogProducts(csrf_token)
+            .then(({ status, data }) => {
+                if (status) {
+                    setProducts(data);
+                }
+            })
+            .finally(() => {
+                setLoading(false);
             });
-        }).finally(() => {
-            setLoading(false);
-
-        })
     }, []);
-    return (
-        <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <Toast ref={toast}/>
-            <Head title="Katalog"/>
-            <LandingNavbar />
-            <BlockUI blocked={loading} fullScreen
-                     template={<i className="pi pi-spin pi-spinner" style={{fontSize: '3rem'}}></i>}>
-                <div className={"mt-[-2px]"}>
-                    <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                        <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded">
-                                <Catalog productsAll={productsAll} categories={categories} cartVisible={cartVisible}
-                                         setCartVisible={setCartVisible} phoneNumber={phoneNumber}/>
 
-                        </div>
+    if (loading) {
+        return (
+            <div className="fixed inset-0 flex items-center justify-center bg-gray-50">
+                <div className="text-center">
+                    <div className="w-16 h-16 border-4 border-yellow-500 border-t-transparent rounded-full animate-spin"></div>
+                    <div className="mt-4 text-lg font-medium text-gray-600">
+                        Ürünler Yükleniyor...
                     </div>
                 </div>
-                <Button icon={"pi pi-shopping-cart"}
-                        onClick={() => {
-                            setCartVisible(true);
-                        }}
-                        rounded className={"fixed bottom-4 right-4"} tooltip={"Sepeti Görüntüle"} tooltipOptions={{
-                    position:"left"
-                }} />
-            </BlockUI>
-            <LandingFooter/>
-        </div>
+            </div>
+        );
+    }
+
+    return (
+        <CartProvider>
+            <Head>
+                <title>Zehir Motor - Ürün Kataloğu</title>
+                <meta name="description" content="Motosikletiniz için en kaliteli yedek parçalar" />
+            </Head>
+            
+            <div className="min-h-screen bg-gray-100">
+                <Navbar />
+                <main className="container mx-auto px-4 py-8">
+                    <HeroSection newProducts={products.filter(p => p.is_new === 1)} />
+                    <Shop products={products} phoneNumber={phoneNumber} />
+                </main>
+                <Footer />
+            </div>
+        </CartProvider>
     );
-}
+};
+
 export default Katalog;
