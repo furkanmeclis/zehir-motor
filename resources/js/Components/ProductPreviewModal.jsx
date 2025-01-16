@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from 'react-use-cart';
-import { LazyLoadImage } from 'react-lazy-load-image-component';
 import logo from '@/logo.png';
 
 const ProductPreviewModal = ({ product, isOpen, onClose }) => {
@@ -51,7 +50,7 @@ const ProductPreviewModal = ({ product, isOpen, onClose }) => {
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-hidden">
                 <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -64,11 +63,11 @@ const ProductPreviewModal = ({ product, isOpen, onClose }) => {
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="relative bg-white rounded-2xl shadow-xl max-w-5xl w-full max-h-[90vh] overflow-y-auto"
+                    className="relative bg-white rounded-2xl shadow-xl w-full max-w-5xl max-h-[90vh] overflow-y-auto"
                 >
                     <button
                         onClick={onClose}
-                        className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+                        className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors z-10"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -77,14 +76,12 @@ const ProductPreviewModal = ({ product, isOpen, onClose }) => {
 
                     <div className="grid md:grid-cols-2 gap-8 p-8">
                         {/* Ürün Görseli */}
-                        <div className="relative aspect-square rounded-xl overflow-hidden">
-                            <LazyLoadImage
+                        <div className="relative aspect-square rounded-xl overflow-hidden bg-gray-50">
+                            <img
                                 src={images[selectedImage]}
                                 alt={product.name}
-                                effect="opacity"
                                 className="w-full h-full object-contain"
-                                loading="lazy"
-                                threshold={100}
+                                onError={(e) => e.target.src = images[0]}
                             />
                             <div className="absolute inset-0 flex items-center justify-center opacity-20 pointer-events-none select-none">
                                 <img src={logo} alt="Watermark" className="w-48 h-48 object-contain" />
@@ -107,13 +104,11 @@ const ProductPreviewModal = ({ product, isOpen, onClose }) => {
                                                     selectedImage === index ? 'ring-2 ring-yellow-500' : ''
                                                 }`}
                                             >
-                                                <LazyLoadImage
+                                                <img
                                                     src={image}
                                                     alt={`${product.name} - ${index + 1}`}
-                                                    effect="opacity"
                                                     className="h-full w-full object-contain"
                                                     loading="lazy"
-                                                    threshold={100}
                                                 />
                                             </button>
                                         ))}
@@ -146,7 +141,7 @@ const ProductPreviewModal = ({ product, isOpen, onClose }) => {
 
                             {/* Sepet İşlemleri */}
                             <div className="space-y-4">
-                                <div className="flex items-center gap-4">
+                                <div className="flex flex-wrap items-center gap-4">
                                     <div className="flex items-center gap-2">
                                         <button
                                             onClick={() => handleQuantityChange(quantity - 1)}

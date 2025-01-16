@@ -351,7 +351,6 @@ class Product extends Model
 
     public static function newProductImageImport($images, $sku): bool
     {
-        return true;
         $sku = Str::upper(Str::slug($sku));
         $filesPath = public_path('uploads/images/' . $sku);
         if (!is_dir($filesPath)) {
@@ -363,7 +362,7 @@ class Product extends Model
         foreach ($images as $image) {
             $response = Http::get($image);
             if ($response->successful()) {
-                $fileName = $i . time() . "_$sku" . pathinfo(parse_url($image, PHP_URL_PATH), PATHINFO_EXTENSION);
+                $fileName = $i . time() . "_$sku.".pathinfo($image, PATHINFO_EXTENSION);
                 $fileFullPath = $filesPath . '/' . $fileName;
                 if (file_put_contents($fileFullPath, $response->body()) === false) {
                     $error = true;
