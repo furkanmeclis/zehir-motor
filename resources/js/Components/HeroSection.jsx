@@ -136,7 +136,7 @@ const HeroSection = ({ newProducts = [] }) => {
             </div>
 
             {/* Yeni Ürünler Slider */}
-            {newProducts.length > 0 && (
+            {newProducts.length > 0 && false && (
                 <div className="bg-white rounded-3xl p-8 shadow-lg">
                     <h2 className="text-3xl font-bold text-gray-900 mb-8 text-center">
                         Yeni Gelen Ürünler
